@@ -12,6 +12,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
     "lodash": "^3.10.0",
+    "passport": "^0.2.2",
     "shortid": "^2.2.2"
   }
 }
