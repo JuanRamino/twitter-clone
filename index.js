@@ -135,6 +135,7 @@ function ensureAuthentication(req, res, next) {
 }
 
 
-var server = app.listen(3000, '127.0.0.1');
+var config = require('./config');
+var server = app.listen(config.get('server:port'), config.get('server:host'));
 
 module.exports = server;
