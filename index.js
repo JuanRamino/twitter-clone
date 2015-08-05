@@ -121,6 +121,11 @@ app.post('/api/auth/login', function(req, res) {
   })(req, res);
 });
 
+app.post('/api/auth/logout', function(req, res) {
+  req.logout();
+  res.sendStatus(200);
+})
+
 // middleware implementation
 function ensureAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
