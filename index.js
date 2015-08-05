@@ -81,7 +81,7 @@ app.get('/api/tweets/:tweetId', function(req, res) {
   res.send({ tweet: tweet });
 });
 
-app.delete('/api/tweets/:tweetId', function(req, res) {
+app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
   var removedTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId);
 
   if (removedTweets.length === 0) {
@@ -90,6 +90,32 @@ app.delete('/api/tweets/:tweetId', function(req, res) {
 
   res.sendStatus(200);
 });
+
+app.post('/api/auth/login', function(req, res) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!user) {
+      return res.sendStatus(403);
+    }
+    req.login(user, function(err) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      return res.send({ user: user });
+    });
+  })(req, res);
+});
+
+// middleware implementation
+function ensureAuthentication(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.sendStatus(403);
+}
+
 
 var server = app.listen(3000, '127.0.0.1');
 
