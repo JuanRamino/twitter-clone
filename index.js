@@ -56,7 +56,12 @@ app.post('/api/users', function(req, res) {
   user.followingIds = [];
   fixtures.users.push(user);
 
-  res.sendStatus(200);
+  req.login(user, function(err) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    res.sendStatus(200);
+  });
 });
 
 app.post('/api/tweets', ensureAuthentication, function(req, res) {
