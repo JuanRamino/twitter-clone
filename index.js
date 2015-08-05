@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash')
   , express = require('express')
   , fixtures = require('./fixtures')
@@ -13,7 +15,7 @@ app.get('/api/tweets', function(req, res) {
   }
 
   var tweets = _.where(fixtures.tweets, { userId: req.query.userId });
-  var sortedTweets = tweets.sort(function(a, b) { return b.created - a.created });
+  var sortedTweets = tweets.sort(function(a, b) { return b.created - a.created; });
 
   res.send({ tweets: sortedTweets });
 });
@@ -39,6 +41,18 @@ app.post('/api/users', function(req, res) {
   fixtures.users.push(user);
 
   res.sendStatus(200);
+});
+
+app.post('/api/tweets', function(req, res) {
+  var shortId = require('shortid');
+  var tweet = req.body.tweet;
+
+  tweet.id = shortId.generate();
+  tweet.created = Date.now() / 1000 | 0;
+
+  fixtures.tweets.push(tweet);
+
+  res.send({ tweet: tweet });
 });
 
 var server = app.listen(3000, '127.0.0.1');
