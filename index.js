@@ -55,6 +55,16 @@ app.post('/api/tweets', function(req, res) {
   res.send({ tweet: tweet });
 });
 
+app.get('/api/tweets/:tweetId', function(req, res) {
+  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
+
+  if (!tweet) {
+    return res.sendStatus(404);
+  }
+
+  res.send({ tweet: tweet });
+})
+
 var server = app.listen(3000, '127.0.0.1');
 
 module.exports = server;
