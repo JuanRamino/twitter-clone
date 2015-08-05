@@ -6,9 +6,25 @@ var _ = require('lodash')
   , app = express()
   , bodyParser = require('body-parser');
 
+var cookieParser = require('cookie-parser')
+  , session  = require('express-session')
+  , passport = require('./auth');
+
+
 // middleware component
 app.use(bodyParser.json());
+app.use(cookieParser());
 
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Routes definitions
 app.get('/api/tweets', function(req, res) {
   if (!req.query.userId) {
     return res.sendStatus(400);
@@ -68,7 +84,7 @@ app.get('/api/tweets/:tweetId', function(req, res) {
 app.delete('/api/tweets/:tweetId', function(req, res) {
   var removedTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId);
 
-  if (removedTweets.length == 0) {
+  if (removedTweets.length === 0) {
     return res.sendStatus(404);
   }
 
