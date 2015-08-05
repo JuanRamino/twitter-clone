@@ -1,8 +1,11 @@
 var _ = require('lodash')
   , express = require('express')
   , fixtures = require('./fixtures')
-  , app = express();
+  , app = express()
+  , bodyParser = require('body-parser');
 
+// middleware component
+app.use(bodyParser.json());
 
 app.get('/api/tweets', function(req, res) {
   if (!req.query.userId) {
@@ -23,6 +26,19 @@ app.get('/api/users/:userId', function(req, res) {
   }
 
   res.send({ user: user });
+});
+
+app.post('/api/users', function(req, res) {
+  var user = req.body.user;
+
+  if (_.find(fixtures.users, 'id', user.id)) {
+    return res.sendStatus(409);
+  }
+
+  user.followingIds = [];
+  fixtures.users.push(user);
+
+  res.sendStatus(200);
 });
 
 var server = app.listen(3000, '127.0.0.1');
