@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash')
-  , passport = require('passport')
-  , fixtures = require('./fixtures')
+var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , conn = require('./db')
   , bcrypt = require('bcrypt');
@@ -38,6 +36,5 @@ function verify(username, password, done) {
 }
 
 passport.use(new LocalStrategy(verify));
-
 
 module.exports = passport;
