@@ -124,19 +124,36 @@ app.get('/api/tweets/:tweetId', function(req, res) {
 });
 
 app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
-  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
+  var Tweet = conn.model('Tweet')
+    , tweetId = req.params.tweetId
+    // http://docs.mongodb.org/manual/reference/object-id/
+    , ObjectId = require('mongoose').Types.ObjectId;
 
-  if (!tweet) {
-    return res.sendStatus(404);
+  if (!ObjectId.isValid(tweetId)) {
+    return res.sendStatus(400);
   }
 
-  if (tweet.userId !== req.user.id) {
-    return res.sendStatus(403);
-  }
+  Tweet.findById(tweetId, function(err, tweet) {
+    if (err) {
+      return res.sendStatus(500);
+    }
 
-  _.remove(fixtures.tweets, 'id', req.params.tweetId);
+    if (!tweet) {
+      return res.sendStatus(404);
+    }
 
-  res.sendStatus(200);
+    if (tweet.userId !== req.user.id) {
+      return res.sendStatus(403);
+    }
+
+    Tweet.findByIdAndRemove(tweet._id, function(err) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      res.sendStatus(200);
+    });
+  });
+
 });
 
 app.post('/api/auth/login', function(req, res) {
