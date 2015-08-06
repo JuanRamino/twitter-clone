@@ -31,10 +31,17 @@ app.get('/api/tweets', function(req, res) {
     return res.sendStatus(400);
   }
 
-  var tweets = _.where(fixtures.tweets, { userId: req.query.userId });
-  var sortedTweets = tweets.sort(function(a, b) { return b.created - a.created; });
+  var Tweet = conn.model('Tweet')
+    , query = { userId: req.query.userId }
+    , options = { sort: { created: -1 } };
 
-  res.send({ tweets: sortedTweets });
+  Tweet.find(query, null, options, function(err, tweets) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    var responseTweets = tweets.map(function(tweet) { return tweet.toClient(); });
+    res.send({ tweets: responseTweets });
+  });
 });
 
 app.get('/api/users/:userId', function(req, res) {
