@@ -4,7 +4,8 @@ var _ = require('lodash')
   , passport = require('passport')
   , fixtures = require('./fixtures')
   , LocalStrategy = require('passport-local').Strategy
-  , conn = require('./db');
+  , conn = require('./db')
+  , bcrypt = require('bcrypt');
 
 
 passport.serializeUser(function(user, done) {
@@ -26,10 +27,13 @@ function verify(username, password, done) {
     if (!user) {
       return done(null, false, { message: 'Incorrect username.' });
     }
-    if (user.password !== password) {
-      return done(null, false, { message: 'Incorrect password.' });
-    }
-    return done(null, user);
+    bcrypt.compare(password, user.password, function(err, matched) {
+      if (err) {
+        return done(err);
+      }
+      matched ? done(null, user)
+              : done(null, false, { message: 'Incorrect password.' });
+    });
   });
 }
 
