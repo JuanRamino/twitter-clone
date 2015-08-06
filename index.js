@@ -38,13 +38,34 @@ app.get('/api/tweets', function(req, res) {
 });
 
 app.get('/api/users/:userId', function(req, res) {
-  var user = _.find(fixtures.users, 'id', req.params.userId);
+  var User = conn.model('User');
 
-  if (!user) {
-    return res.sendStatus(404);
+  User.findOne({ id: req.params.userId }, function(err, user) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    res.send({ user: user });
+  });
+});
+
+app.put('/api/users/:userId', ensureAuthentication, function(req, res) {
+  var User = conn.model('User')
+    , query = { id: req.params.userId }
+    , update = { password: req.body.password };
+
+  if (req.user.id !== req.params.userId) {
+    return res.sendStatus(403);
   }
 
-  res.send({ user: user });
+  User.findOneAndUpdate(query, update, function(err, user) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    res.sendStatus(200);
+  });
 });
 
 app.post('/api/users', function(req, res) {
@@ -126,7 +147,7 @@ app.post('/api/auth/login', function(req, res) {
 app.post('/api/auth/logout', function(req, res) {
   req.logout();
   res.sendStatus(200);
-})
+});
 
 // middleware implementation
 function ensureAuthentication(req, res, next) {
