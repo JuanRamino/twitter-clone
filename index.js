@@ -4,10 +4,11 @@ var _ = require('lodash')
   , express = require('express')
   , fixtures = require('./fixtures')
   , app = express()
-  , bodyParser = require('body-parser');
+  , conn = require('./db');
 
 var cookieParser = require('cookie-parser')
   , session  = require('express-session')
+  , bodyParser = require('body-parser')
   , passport = require('./auth');
 
 
@@ -47,20 +48,21 @@ app.get('/api/users/:userId', function(req, res) {
 });
 
 app.post('/api/users', function(req, res) {
-  var user = req.body.user;
+  var user = req.body.user
+  , User = conn.model('User');
 
-  if (_.find(fixtures.users, 'id', user.id)) {
-    return res.sendStatus(409);
-  }
-
-  user.followingIds = [];
-  fixtures.users.push(user);
-
-  req.login(user, function(err) {
+  User.create(user, function(err, user) {
     if (err) {
-      return res.sendStatus(500);
+      // 11000 === Duplicate key error
+      var code = err.code === 11000 ? 409 : 500;
+      return res.sendStatus(code);
     }
-    res.sendStatus(200);
+    req.login(user, function(err) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      res.sendStatus(200);
+    });
   });
 });
 
