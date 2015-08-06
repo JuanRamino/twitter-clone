@@ -4,26 +4,12 @@ var _ = require('lodash')
   , express = require('express')
   , fixtures = require('./fixtures')
   , app = express()
-  , conn = require('./db');
-
-var cookieParser = require('cookie-parser')
-  , session  = require('express-session')
-  , bodyParser = require('body-parser')
+  , conn = require('./db')
   , passport = require('./auth');
 
+var ensureAuthentication = require('./middleware/ensureAuthentication');
 
-// middleware component
-app.use(bodyParser.json());
-app.use(cookieParser());
-
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
+require('./middleware')(app);
 
 // Routes definitions
 app.get('/api/tweets', function(req, res) {
@@ -177,14 +163,6 @@ app.post('/api/auth/logout', function(req, res) {
   req.logout();
   res.sendStatus(200);
 });
-
-// middleware implementation
-function ensureAuthentication(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.sendStatus(403);
-}
 
 
 var config = require('./config');
