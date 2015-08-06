@@ -1,4 +1,7 @@
-var Schema = require('mongoose').Schema;
+'use strict';
+
+var Schema = require('mongoose').Schema
+  , _ = require('lodash');
 
 var tweetSchema = new Schema(
   { userId: String
@@ -6,5 +9,12 @@ var tweetSchema = new Schema(
   , text: String
   }
 );
+
+tweetSchema.methods.toClient = function() {
+  var tweet = _.pick(this, ['userId', 'created', 'text']);
+  tweet.id = this._id;
+
+  return tweet;
+};
 
 module.exports = tweetSchema;

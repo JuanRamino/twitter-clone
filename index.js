@@ -88,17 +88,18 @@ app.post('/api/users', function(req, res) {
 });
 
 app.post('/api/tweets', ensureAuthentication, function(req, res) {
-  var shortId = require('shortid');
-  var tweet = req.body.tweet;
+  var Tweet = conn.model('Tweet')
+    , tweetData = req.body.tweet;
 
-  tweet.id = shortId.generate();
-  tweet.created = Date.now() / 1000 | 0;
-  // overwrite the userId field with the authenticated user id
-  tweet.userId = req.user.id;
+  tweetData.created = Date.now() / 1000 | 0;
+  tweetData.userId = req.user.id;
 
-  fixtures.tweets.push(tweet);
-
-  res.send({ tweet: tweet });
+  Tweet.create(tweetData, function(err, tweet) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    res.send({ tweet: tweet.toClient() });
+  });
 });
 
 app.get('/api/tweets/:tweetId', function(req, res) {
