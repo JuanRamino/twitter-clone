@@ -17,17 +17,20 @@ passport.deserializeUser(function(id, done) {
 
 // http://passportjs.org/docs/username-password
 function verify(username, password, done) {
-  var user = _.find(fixtures.users, 'id', username);
+  var User = conn.model('User');
 
-  if (!user) {
-    return done(null, false, { message: 'Incorrect username.' });
-  }
-
-  if (user.password !== password) {
-    return done(null, false, { message: 'Incorrect password.' });
-  }
-
-  done(null, user);
+  User.findOne({ id: username }, function(err, user) {
+    if (err) {
+      return done(err);
+    }
+    if (!user) {
+      return done(null, false, { message: 'Incorrect username.' });
+    }
+    if (user.password !== password) {
+      return done(null, false, { message: 'Incorrect password.' });
+    }
+    return done(null, user);
+  });
 }
 
 passport.use(new LocalStrategy(verify));
