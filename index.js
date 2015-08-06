@@ -103,13 +103,17 @@ app.post('/api/tweets', ensureAuthentication, function(req, res) {
 });
 
 app.get('/api/tweets/:tweetId', function(req, res) {
-  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
+  var Tweet = conn.model('Tweet');
 
-  if (!tweet) {
-    return res.sendStatus(404);
-  }
-
-  res.send({ tweet: tweet });
+  Tweet.findById(req.params.tweetId, function(err, tweet) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!tweet) {
+      return res.sendStatus(404);
+    }
+    res.send({ tweet: tweet.toClient() });
+  });
 });
 
 app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
