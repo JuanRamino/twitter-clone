@@ -84,4 +84,25 @@ router.post('/:userId/unfollow', ensureAuthentication, function(req, res) {
   });
 });
 
+router.get('/:userId/friends', function(req, res) {
+  var User = conn.model('User')
+    , userId = req.params.userId;
+
+  User.findByUserId(userId, function(err, user) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    user.getFriends(function(err, friends) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      var friendsList = friends.map(function(user) { return user.toClient() });
+      res.send({ users: friendsList });
+    });
+  });
+});
+
 module.exports = router;

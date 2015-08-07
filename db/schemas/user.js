@@ -46,4 +46,9 @@ userSchema.methods.unfollow = function(userId, done) {
   this.model('User').findByIdAndUpdate(this._id, update, done);
 }
 
+userSchema.methods.getFriends = function(done) {
+  // http://docs.mongodb.org/manual/reference/operator/query/in/
+  this.model('User').find({id: {$in: this.followingIds}}, done);
+}
+
 module.exports = userSchema;
