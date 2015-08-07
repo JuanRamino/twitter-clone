@@ -74,4 +74,14 @@ router.post('/:userId/follow', ensureAuthentication, function(req, res) {
     });
   });
 });
+
+router.post('/:userId/unfollow', ensureAuthentication, function(req, res) {
+  req.user.unfollow(req.params.userId, function(err) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    res.sendStatus(200);
+  });
+});
+
 module.exports = router;
