@@ -1,7 +1,8 @@
 'use strict';
 
 var Schema = require('mongoose').Schema
-  , bcrypt = require('bcrypt');
+  , bcrypt = require('bcrypt')
+  , _ = require('lodash');
 
 var userSchema = new Schema(
   { id: { type: String, unique: true }
@@ -24,5 +25,9 @@ userSchema.pre('save', function(next) {
     next();
   });
 });
+
+userSchema.methods.toClient = function() {
+  return _.pick(this, ['id', 'name']);
+};
 
 module.exports = userSchema;
