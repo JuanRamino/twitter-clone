@@ -30,4 +30,14 @@ userSchema.methods.toClient = function() {
   return _.pick(this, ['id', 'name']);
 };
 
+userSchema.methods.follow = function(userId, done) {
+  // http://docs.mongodb.org/manual/reference/operator/update/addToSet/
+  var update = { $addToSet: { followingIds: userId } };
+  this.model('User').findByIdAndUpdate(this._id, update, done);
+};
+
+userSchema.statics.findByUserId = function(id, done) {
+  this.findOne({ id: id }, done);
+};
+
 module.exports = userSchema;
