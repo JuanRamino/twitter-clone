@@ -44,11 +44,15 @@ userSchema.methods.unfollow = function(userId, done) {
   // http://docs.mongodb.org/manual/reference/operator/update/pull/
   var update = { '$pull': { followingIds: userId } };
   this.model('User').findByIdAndUpdate(this._id, update, done);
-}
+};
 
 userSchema.methods.getFriends = function(done) {
   // http://docs.mongodb.org/manual/reference/operator/query/in/
   this.model('User').find({id: {$in: this.followingIds}}, done);
-}
+};
+
+userSchema.methods.getFollowers = function(done) {
+  this.model('User').find({followingIds: {$in: [this.id]}}, done);
+};
 
 module.exports = userSchema;

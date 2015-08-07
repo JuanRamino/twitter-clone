@@ -99,8 +99,29 @@ router.get('/:userId/friends', function(req, res) {
       if (err) {
         return res.sendStatus(500);
       }
-      var friendsList = friends.map(function(user) { return user.toClient() });
+      var friendsList = friends.map(function(user) { return user.toClient(); });
       res.send({ users: friendsList });
+    });
+  });
+});
+
+router.get('/:userId/followers', function(req, res) {
+  var User = conn.model('User')
+    , userId = req.params.userId;
+
+  User.findByUserId(userId, function(err, user) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    user.getFollowers(function(err, followers) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      var followersList = followers.map(function(user) { return user.toClient(); });
+      res.send({ users: followersList });
     });
   });
 });
