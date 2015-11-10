@@ -1,3 +1,5 @@
+'use strict';
+
 var http = require('http');
 
 function handleRequest(req, res) {

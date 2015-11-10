@@ -1,3 +1,5 @@
+'use strict';
+
 process.env.NODE_ENV = "test"
 
 describe('Test GET route:', function() {

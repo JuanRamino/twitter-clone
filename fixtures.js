@@ -1,3 +1,5 @@
+'use strict';
+
 var fixtures = exports;
 
 fixtures.users =  [ { id: 'talentbuddy'

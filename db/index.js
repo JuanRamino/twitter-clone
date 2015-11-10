@@ -1,14 +1,26 @@
+'use strict';
+
 var mongoose = require('mongoose')
   , config = require('../config')
   , userSchema = require('./schemas/user')
   , tweetSchema = require('./schemas/tweet');
 
-var connection = mongoose.createConnection(
-    config.get('database:host')
-  , config.get('database:name')
-  , config.get('database:port'));
+var host = config.get('database:host')
+  , port = config.get('database:port')
+  , name = config.get('database:name');
+
+var connection = mongoose.createConnection(host, name, port);
 
 connection.model('User', userSchema);
 connection.model('Tweet', tweetSchema);
+
+// CLOSE CONNECTION
+function exit() {
+  connection.close(function() {
+    process.exit(0);
+  });
+};
+
+process.on('SIGINT', exit).on('SIGTERM', exit);
 
 module.exports = connection;
