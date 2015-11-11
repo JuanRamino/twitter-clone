@@ -3,6 +3,8 @@
 var bodyParser = require('body-parser')
   , cookieParser = require('cookie-parser')
   , session  = require('express-session')
+  , MongoStore = require('connect-mongo')(session)
+  , conn = require('../db')
   , passport = require('../auth');
 
 
@@ -11,9 +13,12 @@ module.exports = function(app) {
   app.use(cookieParser());
 
   app.use(session({
-    secret: 'keyboard cat',
+    secret: 'jf:K8295Hs$eGAuy',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new MongoStore({
+      mongooseConnection: conn
+    })
   }));
 
   app.use(passport.initialize());
