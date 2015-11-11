@@ -3,3 +3,6 @@ node_modules
 
 # Ignore file system files.
 .DS_Store
+
+# Ignore npm log
+npm-debug.log
