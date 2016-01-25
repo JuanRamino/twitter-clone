@@ -2,28 +2,42 @@
 
 var express = require('express')
   , router = express.Router()
-  , passport = require('../../auth');
+  , conn = require('../../db')
+  , jwt    = require('jsonwebtoken')
+  , bcrypt = require('bcrypt')
+  , _ = require('lodash')
+  , auth = require('../../auth');
 
 router.post('/login', function(req, res) {
-  passport.authenticate('local', function(err, user, info) {
+  
+  var User = conn.model('User');
+  User.findOne({ id: req.body.username }, function(err, user) {
+    
     if (err) {
       return res.sendStatus(500);
-    }
+    } 
+    // no user
     if (!user) {
-      return res.sendStatus(403);
+      return res.json({ success: false, message: 'Authentication failed. User not found.' });
     }
-    req.login(user, function(err) {
+
+    bcrypt.compare(req.body.password, user.password, function(err, matched) {
       if (err) {
         return res.sendStatus(500);
       }
-      return res.send({ user: user });
-    });
-  })(req, res);
-});
+      // password didn't match
+      if (!matched) {
+        return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+      }
 
-router.post('/logout', function(req, res) {
-  req.logout();
-  res.sendStatus(200);
+      var payload = _.omit(user.toJSON(), 'password' );
+      var token = auth(payload);
+      
+      return res.json({
+        token: token
+      });
+    });
+  });
 });
 
 module.exports = router;

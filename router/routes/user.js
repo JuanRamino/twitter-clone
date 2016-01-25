@@ -3,7 +3,9 @@
 var express = require('express')
   , router = express.Router()
   , conn = require('../../db')
-  , ensureAuthentication = require('../../middleware/ensureAuthentication');
+  , ensureAuthentication = require('../../middleware/ensureAuthentication')
+  , _ = require('lodash')
+  , auth = require('../../auth');
 
 router.get('/:userId', function(req, res) {
   var User = conn.model('User');
@@ -46,11 +48,12 @@ router.post('/', function(req, res) {
       var code = err.code === 11000 ? 409 : 500;
       return res.sendStatus(code);
     }
-    req.login(user, function(err) {
-      if (err) {
-        return res.sendStatus(500);
-      }
-      res.sendStatus(200);
+    
+    var payload = _.omit(user.toJSON(), 'password' );
+    var token = auth(payload);
+      
+    return res.json({
+      token: token
     });
   });
 });

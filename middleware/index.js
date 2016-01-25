@@ -1,26 +1,15 @@
 'use strict';
 
 var bodyParser = require('body-parser')
-  , cookieParser = require('cookie-parser')
-  , session  = require('express-session')
-  , MongoStore = require('connect-mongo')(session)
-  , conn = require('../db')
-  , passport = require('../auth');
+  , morgan = require('morgan')
+  , nconf = require('nconf');
 
 
 module.exports = function(app) {
+  app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-  app.use(cookieParser());
-
-  app.use(session({
-    secret: 'jf:K8295Hs$eGAuy',
-    resave: false,
-    saveUninitialized: true,
-    store: new MongoStore({
-      mongooseConnection: conn
-    })
-  }));
-
-  app.use(passport.initialize());
-  app.use(passport.session());
+  
+  if ( nconf.get('NODE_ENV') == 'test' ) {
+    app.use(morgan('dev'));
+  }
 };

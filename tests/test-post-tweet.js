@@ -10,9 +10,8 @@ var config = require('../config')
 
 describe("Test /api/tweets", function() {
 
-  var app = require('../index')
-    , Session = require('supertest-session')({ app: app })
-    , agent = new Session();
+  var app = require('../index');
+  var token;
 
   before(function(done) {
 
@@ -35,10 +34,17 @@ describe("Test /api/tweets", function() {
                      , name: 'Test'
                      , password: 'test'
                      , email: 'test@test.com' };
-      agent
+      request(app)
         .post('/api/users')
         .send({user: testUser})
-        .expect(200, next);
+        .expect(200)
+        .end(function(err, response) {
+          if (err) { 
+            return next(err);
+          }
+          token = response.body.token;
+          next();
+      });
     }
 
     async.series([dropDatabase, initAgent], done);
@@ -48,15 +54,15 @@ describe("Test /api/tweets", function() {
   it("test scenario 1", function(done) {
     request(app)
       .post('/api/tweets')
-      .send({tweet: {text: 'Test tweet', userId: 'test'}})
+      .send({tweet: { text: 'Test tweet', userId: 'test' }})
       .expect(403, done);
   });
 
   it("test scenario 2", function(done) {
     var tweet = { text: 'Test' };
-    agent
+    request(app)
       .post('/api/tweets')
-      .send({ tweet: tweet })
+      .send({ token: token, tweet: tweet })
       .expect(200)
       .end(function(err, response) {
         if (err) {

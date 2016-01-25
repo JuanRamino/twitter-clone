@@ -1,11 +1,12 @@
 { 
   "server": { 
     "port": 3000,
-    "host": "46.101.143.238"
+    "host": "twitter.webabile.it"
   },
   "database": {
     "host": "127.0.0.1",
     "port": 27017,
     "name": "twitterprod"
-  }
+  },
+  "secret": "*Ramino$33^Is#The<Best@"
 }
