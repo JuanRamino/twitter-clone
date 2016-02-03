@@ -18,7 +18,7 @@ router.post('/login', function(req, res) {
     } 
     // no user
     if (!user) {
-      return res.json({ success: false, message: 'Authentication failed. User not found.' });
+      return res.sendStatus(401);
     }
 
     bcrypt.compare(req.body.password, user.password, function(err, matched) {
@@ -27,7 +27,7 @@ router.post('/login', function(req, res) {
       }
       // password didn't match
       if (!matched) {
-        return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+        return res.sendStatus(401);
       }
 
       var payload = _.omit(user.toJSON(), 'password' );
