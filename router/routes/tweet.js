@@ -87,7 +87,7 @@ router.delete('/:tweetId', ensureAuthentication, function(req, res) {
       if (err) {
         return res.sendStatus(500);
       }
-      res.sendStatus(200);
+      res.send({});
     });
   });
 });
