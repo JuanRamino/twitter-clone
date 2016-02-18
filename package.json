@@ -1,7 +1,17 @@
 {
   "name": "twitter_clone_app",
   "version": "1.0.0",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanRamino/twitter-clone.git"
+  },
+  "authors": [
+    {
+      "name": "JuanRamino",
+      "email": "juan.ramino@gmail.com"
+    }
+  ],
+  "description": "A twitter clone backEnd",
   "main": "index.js",
   "scripts": {
     "mocha": "mocha",
