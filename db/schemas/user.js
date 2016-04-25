@@ -13,6 +13,7 @@ var userSchema = new Schema(
   }
 );
 
+// hook pre save action
 userSchema.pre('save', function(next) {
   var _this = this;
 
@@ -26,31 +27,37 @@ userSchema.pre('save', function(next) {
   });
 });
 
+// user.toClient()
 userSchema.methods.toClient = function() {
   return _.pick(this, ['id', 'name']);
 };
 
+//
 userSchema.methods.follow = function(userId, done) {
   // http://docs.mongodb.org/manual/reference/operator/update/addToSet/
   var update = { $addToSet: { followingIds: userId } };
   this.model('User').findByIdAndUpdate(this._id, update, done);
 };
 
+// User.findByUserId(id, done)
 userSchema.statics.findByUserId = function(id, done) {
   this.findOne({ id: id }, done);
 };
 
+//
 userSchema.methods.unfollow = function(userId, done) {
   // http://docs.mongodb.org/manual/reference/operator/update/pull/
   var update = { '$pull': { followingIds: userId } };
   this.model('User').findByIdAndUpdate(this._id, update, done);
 };
 
+//
 userSchema.methods.getFriends = function(done) {
   // http://docs.mongodb.org/manual/reference/operator/query/in/
   this.model('User').find({id: {$in: this.followingIds}}, done);
 };
 
+//
 userSchema.methods.getFollowers = function(done) {
   this.model('User').find({followingIds: {$in: [this.id]}}, done);
 };

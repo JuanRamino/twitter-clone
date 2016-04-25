@@ -10,6 +10,7 @@ var tweetSchema = new Schema(
   }
 );
 
+// tweet.toClient()
 tweetSchema.methods.toClient = function() {
   var tweet = _.pick(this, ['userId', 'created', 'text']);
   tweet.id = this._id;

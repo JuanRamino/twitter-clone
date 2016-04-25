@@ -8,6 +8,7 @@ var express = require('express')
   , _ = require('lodash')
   , auth = require('../../auth');
 
+// login
 router.post('/login', function(req, res) {
   
   var User = conn.model('User');

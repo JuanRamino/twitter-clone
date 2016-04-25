@@ -7,6 +7,7 @@ var express = require('express')
   , _ = require('lodash')
   , auth = require('../../auth');
 
+// get single user
 router.get('/:userId', function(req, res) {
   var User = conn.model('User');
 
@@ -21,6 +22,7 @@ router.get('/:userId', function(req, res) {
   });
 });
 
+// update user pwd
 router.put('/:userId', ensureAuthentication, function(req, res) {
   var User = conn.model('User')
     , query = { id: req.params.userId }
@@ -38,6 +40,7 @@ router.put('/:userId', ensureAuthentication, function(req, res) {
   });
 });
 
+// post a new user
 router.post('/', function(req, res) {
   var user = req.body.user
   , User = conn.model('User');
@@ -58,6 +61,7 @@ router.post('/', function(req, res) {
   });
 });
 
+// follow a user
 router.post('/:userId/follow', ensureAuthentication, function(req, res) {
   var User = conn.model('User')
     , userId = req.params.userId;
@@ -78,6 +82,7 @@ router.post('/:userId/follow', ensureAuthentication, function(req, res) {
   });
 });
 
+// unfollow a user
 router.post('/:userId/unfollow', ensureAuthentication, function(req, res) {
   req.user.unfollow(req.params.userId, function(err) {
     if (err) {
@@ -87,6 +92,7 @@ router.post('/:userId/unfollow', ensureAuthentication, function(req, res) {
   });
 });
 
+// get user's friends
 router.get('/:userId/friends', function(req, res) {
   var User = conn.model('User')
     , userId = req.params.userId;
@@ -108,6 +114,7 @@ router.get('/:userId/friends', function(req, res) {
   });
 });
 
+// get user's followers
 router.get('/:userId/followers', function(req, res) {
   var User = conn.model('User')
     , userId = req.params.userId;

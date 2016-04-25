@@ -5,7 +5,7 @@ var express = require('express')
   , conn = require('../../db')
   , ensureAuthentication = require('../../middleware/ensureAuthentication');
 
-
+// get tweets
 router.get('/', ensureAuthentication, function(req, res) {
   var Tweet = conn.model('Tweet')
     , stream = req.query.stream
@@ -13,12 +13,16 @@ router.get('/', ensureAuthentication, function(req, res) {
     , options = { sort: { created: -1 } }
     , query = null;
 
-
+  // tweets from users followed
   if (stream === 'home_timeline') {
     query = { userId: { $in: req.user.followingIds }};
-  } else if (stream === 'profile_timeline' && userId) {
+  }
+  // personal tweets
+  else if (stream === 'profile_timeline' && userId) {
     query = { userId: userId };
-  } else {
+  }
+  // stream is no defined in query
+  else {
     return res.sendStatus(400);
   }
 
@@ -31,6 +35,7 @@ router.get('/', ensureAuthentication, function(req, res) {
   });
 });
 
+// post a tweet
 router.post('/', ensureAuthentication, function(req, res) {
   var Tweet = conn.model('Tweet')
     , tweetData = req.body.tweet;
@@ -46,6 +51,7 @@ router.post('/', ensureAuthentication, function(req, res) {
   });
 });
 
+// get single tweet
 router.get('/:tweetId', function(req, res) {
   var Tweet = conn.model('Tweet');
 
@@ -60,6 +66,7 @@ router.get('/:tweetId', function(req, res) {
   });
 });
 
+// delete a tweet
 router.delete('/:tweetId', ensureAuthentication, function(req, res) {
   var Tweet = conn.model('Tweet')
     , tweetId = req.params.tweetId

@@ -3,6 +3,7 @@
 var nconf = require('nconf')
   , path = require('path');
 
+// load configuration on enviroment variable
 nconf.env();
 
 var configFile = 'config-' + nconf.get('NODE_ENV') + '.json'

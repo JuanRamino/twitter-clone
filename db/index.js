@@ -11,6 +11,7 @@ var host = config.get('database:host')
 
 var connection = mongoose.createConnection(host, name, port);
 
+// inject models to connection
 connection.model('User', userSchema);
 connection.model('Tweet', tweetSchema);
 
