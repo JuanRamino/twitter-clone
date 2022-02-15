@@ -4,7 +4,7 @@ var express = require('express')
   , router = express.Router()
   , conn = require('../../db')
   , jwt    = require('jsonwebtoken')
-  , bcrypt = require('bcrypt')
+  , bcrypt = require('bcryptjs')
   , _ = require('lodash')
   , auth = require('../../auth');
 
