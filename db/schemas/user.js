@@ -1,7 +1,7 @@
 'use strict';
 
 var Schema = require('mongoose').Schema
-  , bcrypt = require('bcrypt')
+  , bcrypt = require('bcryptjs')
   , _ = require('lodash');
 
 var userSchema = new Schema(
