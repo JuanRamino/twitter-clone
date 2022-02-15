@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^0.8.4",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.13.3",
     "cors": "^2.7.1",
     "express": "^4.13.3",
